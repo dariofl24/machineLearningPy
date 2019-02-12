@@ -151,8 +151,13 @@ def update_clusters_k_means(points, cluster_weights):
                                         [4. , 4. ]])
 
     """
-    new_clusts = np.array([])
+    new_clusts = []
 
+    for c in cluster_weights.T:
+        c_points = points.copy()[c==1,:]
+        new_clusts.append(np.apply_along_axis(np.mean,0,c_points).reshape(1,-1))
+
+    new_clusts = np.concatenate(new_clusts)
 
     return new_clusts
 

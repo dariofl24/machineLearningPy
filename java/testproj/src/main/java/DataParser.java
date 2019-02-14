@@ -101,6 +101,8 @@ public class DataParser
 
             final ArrayList<String> finalLines = new ArrayList<String>();
 
+            final String idNameMap = getProductIdNameMap(productList);
+            finalLines.add("custid,"+idNameMap);
 
             for (final String cust : customerList)
             {
@@ -134,13 +136,63 @@ public class DataParser
 
             }//
 
-            FileUtils.writeLines(new File("/Users/dflores/Documents/testproj/reviewsTable_30.csv"), finalLines);
+            FileUtils.writeLines(new File("/Users/dflores/Documents/testproj/reviewsTable_0_30.csv"), finalLines);
 
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+
+    }
+
+    public static String getProductIdNameMap(final List<String> productList)
+    {
+
+        try
+        {
+            List<String> lines = FileUtils.readLines(new File("/Users/dflores/Downloads/ml-latest-small/movies.csv"),
+                    "UTF-8");
+
+            final Map<String, String> idNamesMap = new HashMap<String, String>();
+
+            for (String line : lines)
+            {
+
+                if (line != null && !line.isEmpty())
+                {
+
+                    final String[] split = line.split(",");
+
+                    final String id = split[0];
+                    final String ll = split[split.length - 1];
+                    final String name = line.replace(id, "").replace(ll, "")
+                            .trim()
+                            .replaceAll("^,", "")
+                            .replaceAll(",$", "")
+                            .replace("\"","")
+                            .replace(","," ")
+                            .replace("  "," ")
+                            .trim();
+
+                    idNamesMap.put(id, name);
+                }
+            }
+
+            final String collect = productList.stream()
+                    .map(code -> idNamesMap.get(code))
+                    .collect(Collectors.joining(","));
+
+            System.out.println(collect);
+            return collect;
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return "";
 
     }
 

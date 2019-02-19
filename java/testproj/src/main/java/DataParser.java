@@ -18,7 +18,7 @@ public class DataParser
 
         try
         {
-            List<String> lines = FileUtils.readLines(new File("/Users/dflores/Downloads/ml-latest-small/ratings.csv"),
+            List<String> lines = FileUtils.readLines(new File("/Users/darioflores/Documents/machineLearn/java/ml-latest-small/ratings.csv"),
                     "UTF-8");
 
             System.out.println("All::" + lines.size());
@@ -136,7 +136,7 @@ public class DataParser
 
             }//
 
-            FileUtils.writeLines(new File("/Users/dflores/Documents/testproj/reviewsTable_0_30.csv"), finalLines);
+            FileUtils.writeLines(new File("/Users/darioflores/Documents/machineLearn/java/testproj/reviewsTable_0_30.csv"), finalLines);
 
         }
         catch (IOException e)
@@ -151,7 +151,7 @@ public class DataParser
 
         try
         {
-            List<String> lines = FileUtils.readLines(new File("/Users/dflores/Downloads/ml-latest-small/movies.csv"),
+            List<String> lines = FileUtils.readLines(new File("/Users/darioflores/Documents/machineLearn/java/ml-latest-small/movies.csv"),
                     "UTF-8");
 
             final Map<String, String> idNamesMap = new HashMap<String, String>();

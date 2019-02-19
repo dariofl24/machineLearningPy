@@ -19,7 +19,7 @@ def df_ratings_avg(dff):
     avg_data = []
 
     for col in dff.columns:
-        val_counts = df[col].value_counts().sort_index()
+        val_counts = dff[col].value_counts().sort_index()
         avgg=series_avg(val_counts)
 
         avg_index.append(col)
@@ -34,7 +34,16 @@ df = pd.read_csv("../java/testproj/reviewsTable_0_30.csv").set_index('custid')
 
 print(df.head())
 
-print(df_ratings_avg(df))
+ratings = df_ratings_avg(df)
+
+for mov in ratings.index.values:
+    print(mov)
+    print(ratings[mov])
+    print('-')
+
+#print(df_ratings_avg(df))
+
+
 
 
 

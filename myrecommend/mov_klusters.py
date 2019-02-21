@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
+from sklearn.cluster import KMeans
 
 
 def distEclud(vecA, vecB):
-    #print(vecA)
-    #print(vecB)
+
     return (np.sum((vecA - vecB)**2.0))**0.5
+#distEclud
 
 def findSimilar_single(dff,baseIdx,limit=5):
 
@@ -22,9 +23,37 @@ def findSimilar_single(dff,baseIdx,limit=5):
             nn_dist.append( 1./(1.+dist) )
 
     return pd.Series(data=nn_dist,index= nn_index).sort_values(ascending = False)
+#findSimilar_single
 
+def getBestKlusters(X,kn):
 
+    rand_states = [4,8,64,256,0,1,2,10]
 
+    best_labels = None
+    best_center = None
+
+    best_sum = 0.
+
+    for state in rand_states:
+
+        kmeans = KMeans(n_clusters=kn, random_state=state).fit(X)
+        labels = kmeans.labels_
+
+        centers=kmeans.cluster_centers_
+
+        dist_sum = 0.
+
+        for idx in range(labels.shape[0]-1):
+            cent = centers[ labels[idx] ]
+            point = X[idx]
+            dist_sum += distEclud(cent,point)
+
+        if ( (-1./dist_sum) <=  best_sum):
+            best_labels = labels
+            best_center = centers
+
+    return best_labels,best_center
+#getBestKlusters
 
 # MAIN
 df = pd.read_csv("../java/testproj/reviewsTable_0_30.csv").set_index('custid')
@@ -58,20 +87,29 @@ for col in df.columns:
 
     dim_vec_list.append(dim_vec)
 
-df2 = pd.DataFrame(data=dim_vec_list,columns=[0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0],
+df2 = pd.DataFrame(data=dim_vec_list,
+columns=[0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0],
 index=df.columns.values)
 
-#print(df2)
+#print(df2.head)
 
-#print(df2.iloc[1])
-#print(distEclud( df2.iloc[30],df2.iloc[101] ))
+#movie_usr ='Toy Story 3 (2010)'
+#similar = findSimilar_single(df2,movie_usr)
 
-movie_usr ='Toy Story 3 (2010)'
+kluster_number = 52
 
-similar = findSimilar_single(df2,movie_usr)
-print(df2.loc[movie_usr])
-print(similar)
+best_labels,best_center=getBestKlusters(dim_vec_list,kluster_number)
 
+#print(best_labels)
+#print(best_center)
+
+labels_series = pd.Series(data=best_labels,index=df.columns.values)
+
+for kidx in range(kluster_number):
+    print("---")
+    print(np.sum( (best_center[kidx]/100.) * np.array([.5,1.,1.5,2.,2.5,3.,3.5,4.,4.5,5.])))
+    print(best_center[kidx])
+    print(labels_series[labels_series == kidx])
 
 
 

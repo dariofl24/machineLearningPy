@@ -52,7 +52,7 @@ def rank_sub_df(sub_df):
 
         if(np.sum(column.values) > 0 ):
 
-            if( len(column[column != 0].values) >= float(len(column.index.values))/3.0  ):
+            if( len(column[column != 0].values) >= float(len(column.index.values))/12.0  ):
 
                 mov_avg = np.average(column[column != 0].values)
 
@@ -78,7 +78,7 @@ for usr in df.index.values:
     usr_val_list.append(df.loc[usr].values)
     #print('---')
 
-kluster_number = 55
+kluster_number = 30
 
 best_labels,best_center=getBestKlusters(usr_val_list,kluster_number)
 
@@ -93,7 +93,7 @@ print(not_rated)
 for kn in range(kluster_number):
     sub_clust_series = kluster_series[ kluster_series == kn ]
 
-    if(len(sub_clust_series.index.values) >2 and kn == me_kluster ):
+    if(len(sub_clust_series.index.values) >10 ): #and kn == me_kluster ):
         print("----------------------------------------------------")
         print('Kl :: '+str(kn))
         print("# Of Users")

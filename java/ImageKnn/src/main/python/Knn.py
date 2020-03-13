@@ -12,40 +12,43 @@ def getBestKlusters(X,kn):
     return labels,centers
 #getBestKlusters
 
-def getKlustersFromCSV(inputFile,outputFile):
+def getKlustersFromCSV(inputFile,outputFile,kluster_number):
 
+    df = pd.read_csv(inputFile)
+    print(df.head())
 
+    usr_val_list = []
+    for usr in df.index.values:
+        usr_val_list.append(df.loc[usr].values)
+
+    best_labels,best_center=getBestKlusters(usr_val_list,kluster_number)
+
+    kluster_series = pd.Series(data = best_labels,index=df.index.values)
+
+    print ("Labels::")
+    print (best_labels)
+    print ("+++++++++++++++++++++++")
+    print ("kluster_series::")
+    print(kluster_series)
+
+    f= open(outputFile,"w+")
+
+    for ii in range(best_labels.size):
+        f.write(str(ii) +","+ str(best_labels[ii]) +"\n")
+
+    f.close()
 
     return
 
 #Main
-df = pd.read_csv("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv")
-print(df.head())
 
-usr_val_list = []
+getKlustersFromCSV("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors.csv",
+                   "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors_klusters.txt",
+                   25)
 
-for usr in df.index.values:
-    usr_val_list.append(df.loc[usr].values)
+getKlustersFromCSV("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv",
+                   "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points_klusters.txt",
+                   60)
 
 
-kluster_number = 60
-
-best_labels,best_center=getBestKlusters(usr_val_list,kluster_number)
-
-kluster_series = pd.Series(data = best_labels,index=df.index.values)
-
-print ("Labels::")
-print (best_labels)
-print ("+++++++++++++++++++++++")
-print ("kluster_series::")
-print(kluster_series)
-
-# /Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results
-f= open("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/klusters.txt","w+")
-
-for ii in range(best_labels.size):
-    f.write(str(ii) +","+ str(best_labels[ii]) +"\n")
-
-f.close()
 #
-

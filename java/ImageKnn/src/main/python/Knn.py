@@ -44,11 +44,11 @@ def getKlustersFromCSV(inputFile,outputFile,kluster_number):
 
 getKlustersFromCSV("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors.csv",
                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors_klusters.txt",
-                   25)
+                   12)
 
-getKlustersFromCSV("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv",
-                   "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points_klusters.txt",
-                   60)
+# getKlustersFromCSV("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv",
+#                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points_klusters.txt",
+#                    30)
 
 
 #

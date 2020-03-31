@@ -27,7 +27,7 @@ public class ImageClusterBuilder
             builder.buildClusteredImages(60,
                     "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv",
                     "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/klusters.txt",
-                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston.jpg",
+                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston22.jpg",
                     "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/clustered");
         }
         catch (IOException e)

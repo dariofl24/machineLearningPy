@@ -9,5 +9,8 @@
         <module name="ImageKnn" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="KlusterUtils" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

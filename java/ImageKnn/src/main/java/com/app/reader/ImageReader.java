@@ -23,7 +23,7 @@ public class ImageReader
         try
         {
             ImageReader
-                    .imageRead("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston.jpg",
+                    .imageRead("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston22.jpg",
                             "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/points.csv",
                             "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors.csv");
         }

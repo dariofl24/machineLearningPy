@@ -2,6 +2,9 @@ package com.app.builder;
 
 import javax.imageio.ImageIO;
 
+import com.app.utils.KlusterUtils;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +30,9 @@ public class ImageColorClusterBuilder
         {
             builder.build("/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors.csv",
                     "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors_klusters.txt",
-                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston.jpg",
-                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors");
+                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/inputs/aston22.jpg",
+                    "/Users/dflores/dariofl24/machinelearn/machineLearningPy/java/ImageKnn/results/colors",
+                    false);
         }
         catch (IOException e)
         {
@@ -37,20 +41,24 @@ public class ImageColorClusterBuilder
     }
 
     public void build(final String colors, final String colors_klusters, final String imgBase,
-            final String outputPath)
+            final String outputPath, final boolean greyScale)
             throws IOException
     {
-        final HashMap<String, Integer> colorKlusterMap = parseColorClusterInfo(colors, colors_klusters);
+        //final HashMap<String, Integer> colorKlusterMap = parseColorClusterInfo(colors, colors_klusters);
+        max_clusters = 8;
+        final HashMap<String, Integer> colorKlusterMap = calculateKlusters(colors, max_clusters);
 
-        for (int kn = 0; kn <= max_clusters; kn++)
+        for (int knx = 0; knx < max_clusters; knx++)
         {
-            System.out.println("Building:" + kn);
-            buildImage(imgBase, colorKlusterMap, new File(outputPath, "ck_" + kn + ".jpg"), kn);
+            System.out.println("Building:" + knx);
+            buildImage(imgBase, colorKlusterMap,
+                    new File(outputPath, "ck_" + knx + ".jpg"),
+                    Lists.newArrayList(knx), greyScale);
         }
     }
 
     private void buildImage(final String imgBase, final HashMap<String, Integer> colorKlusterMap,
-            final File output, final int knn)
+            final File output, final List<Integer> knns, final boolean greyScale)
             throws IOException
     {
         final BufferedImage base = ImageIO.read(new File(imgBase));
@@ -64,14 +72,68 @@ public class ImageColorClusterBuilder
                 final Color color = new Color(base.getRGB(xx, yy));
                 final String key = color.getRed() + "," + color.getGreen() + "," + color.getBlue();
 
-                if (colorKlusterMap.get(key) != knn)
+                if (!knns.contains(colorKlusterMap.get(key)))
                 {
                     base.setRGB(xx, yy, pix.getRGB());
+                }
+                else
+                {
+                    base.setRGB(xx, yy, getGrayScaleColor(color, greyScale).getRGB());
                 }
             }
         }
 
         ImageIO.write(base, "jpg", output);
+    }
+
+    private static final double SQRT_3 = Math.sqrt(3d);
+
+    private Color getGrayScaleColor(final Color color, final boolean greyScale)
+    {
+        if (!greyScale)
+            return color;
+
+        final int red = color.getRed();
+        final int green = color.getGreen();
+        final int blue = color.getBlue();
+
+        final int rgb = (int) Math.round(
+                (Math.sqrt((red * red) + (green * green) + (blue * blue)) / SQRT_3) * 0.70
+        );
+
+        return new Color(rgb, rgb, rgb);
+    }
+
+    private HashMap<String, Integer> calculateKlusters(final String colors, final Integer kn)
+    {
+        final File file = new File(colors);
+
+        final KlusterUtils utils = new KlusterUtils();
+
+        final KlusterUtils.KlusterResult klusters = utils.getKlustersFromCSV(file, kn, 4);
+
+        final HashMap<Integer, List<ImmutableList<Double>>> klusterPointsMap = klusters.getKlusterPointsMap();
+
+        final HashMap<String, Integer> resp = Maps.newHashMap();
+
+        for (final Integer key : klusterPointsMap.keySet())
+        {
+            final List<ImmutableList<Double>> immutableLists = klusterPointsMap.get(key);
+
+            for (final ImmutableList<Double> point : immutableLists)
+            {
+                final String stringVector = toStringVector(point);
+                resp.put(stringVector, key);
+            }
+        }
+
+        return resp;
+    }
+
+    private String toStringVector(final ImmutableList<Double> point)
+    {
+        return point.stream().map(dd -> dd.toString()).map(ss -> ss.replaceAll("\\.\\d*", ""))
+                .collect(Collectors.joining(","));
     }
 
     private HashMap<String, Integer> parseColorClusterInfo(final String colors, final String clusters)

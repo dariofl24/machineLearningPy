@@ -73,11 +73,16 @@ public class KlusterUtils
         HashMap<Integer, List<ImmutableList<Double>>> klusterPointsMap = null;
         Map<Integer, ImmutableList<Double>> newKlusters = null;
 
-        int loop = 0;
-
         while (next)
         {
-            klusterPointsMap = assignPointsToKlusters(initialKlusters, points);
+            try
+            {
+                klusterPointsMap = assignPointsToKlustersParallel(initialKlusters, points);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
 
             newKlusters = klusterPointsMap.entrySet().stream()
                     .map(this::calculateCentroidFromEntry)
@@ -93,7 +98,7 @@ public class KlusterUtils
     private boolean areEqual(final Map<Integer, ImmutableList<Double>> initialKlusters,
             final Map<Integer, ImmutableList<Double>> newKlusters, final Double precision)
     {
-        System.out.println("-----------");
+        //System.out.println("-----------");
         for (final Integer key : initialKlusters.keySet())
         {
 
@@ -103,7 +108,7 @@ public class KlusterUtils
                 final ImmutableList<Double> vec2 = newKlusters.get(key);
 
                 final Double distance = distance(vec1, vec2);
-                System.out.println(distance);
+                //System.out.println(distance);
 
                 if (distance.compareTo(precision) > 0)
                 {
@@ -206,11 +211,18 @@ public class KlusterUtils
 
         for (final HashMap<Integer, List<ImmutableList<Double>>> partialMap : results)
         {
+            for (final Integer key : partialMap.keySet())
+            {
+                if (!resultMap.containsKey(key))
+                {
+                    resultMap.put(key, Lists.newArrayList());
+                }
 
-
+                resultMap.get(key).addAll(partialMap.get(key));
+            }
         }
 
-        return null;
+        return resultMap;
     }
 
     public Future<HashMap<Integer, List<ImmutableList<Double>>>> calculateAsync(
